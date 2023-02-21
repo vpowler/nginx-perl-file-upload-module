@@ -75,7 +75,7 @@ sub error {
     $r->send_http_header();
     $r->print("Upload has failed, see the logs");
 
-    return DECLINED;
+    return OK;
 }
 
 1;
