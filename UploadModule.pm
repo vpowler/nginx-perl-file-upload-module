@@ -47,16 +47,21 @@ sub post {
     my $filename = $body->{upload}->{file}->{filename};
 
     # Check for "filename.extension" format
-    unless $filename =~ /^[a-zA-Z0-9]+\.[a-zA-Z0-9]{1,100}$/ return error($r, HTTP_BAD_REQUEST, "Invalid filename format");
+    unless ($filename =~ /^[a-zA-Z0-9]+\.[a-zA-Z0-9]{1,100}$/) {
+        return error($r, HTTP_BAD_REQUEST, "Invalid filename format");
+    }
 
     my $destination = $upload_dir . "/" . $filename;
 
-    unless move($tempname, $destination) return error($r, HTTP_INTERNAL_SERVER_ERROR, "Unable to move uploaded file");
-
+    unless (move($tempname, $destination)) {
+        return error($r, HTTP_INTERNAL_SERVER_ERROR, "Unable to move uploaded file");
+    }
+    
     $r->status(HTTP_CREATED);
     my $response = '{"message": "File uploaded successfully"}';
     $r->send_http_header('application/json');
     $r->print($response);
+    
     return OK;
 }
 
@@ -70,7 +75,7 @@ sub error {
     $r->send_http_header();
     $r->print("Upload has failed, see the logs");
 
-    return OK;
+    return DECLINED;
 }
 
 1;
