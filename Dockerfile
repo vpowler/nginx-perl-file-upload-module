@@ -1,6 +1,6 @@
 FROM nginx:1.23.3-alpine-perl
 
-RUN apk add perl-http-body
+RUN apk add perl-http-body bash
 RUN mkdir /etc/nginx/perl
 
 ENV UPLOAD_DIR="/tmp/uploads"
