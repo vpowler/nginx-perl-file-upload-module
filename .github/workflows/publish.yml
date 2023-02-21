@@ -3,25 +3,32 @@ name: Build and publish Docker image
 on:
   push:
     branches: [ master ]
-
+ 
 jobs:
-  build-and-publish:
+  publish:
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v2
+      - uses: actions/checkout@v2
 
-      - name: Build Docker image
-        run: docker build -t ghcr.io/vpowler/nginx-perl-file-upload-module:latest .
-        env:
-          DOCKER_BUILDKIT: 1
-
-      - name: Login to GitHub Container Registry
-        uses: docker/login-action@v1
+      - uses: docker/login-action@v1
         with:
           registry: ghcr.io
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
+          
+      - name: Add Docker image metadata
+        uses: docker/metadata-action@v3
+        with:
+          images: ghcr.io/vpowler/nginx-perl-file-upload-module
+          tags: latest
+          description: A Docker image for running Nginx with Perl file upload module
 
-      - name: Push Docker image
-        run: docker push ghcr.io/vpowler/nginx-perl-file-upload-module:latest
+      - uses: docker/build-push-action@v2
+        with:
+          file: Dockerfile
+          push: true
+
