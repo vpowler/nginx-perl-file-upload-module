@@ -43,7 +43,7 @@ sub post {
     }
 
     unless (defined $body->{upload} && defined $body->{upload}->{file}) {
-        return error($r, HTTP_BAD_REQUEST, "Cannot parse multipart data");
+        return error($r, HTTP_INTERNAL_SERVER_ERROR, "Cannot parse multipart data");
     }
 
     # Get the parsed params
