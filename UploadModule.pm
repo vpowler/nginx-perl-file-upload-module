@@ -32,6 +32,9 @@ sub post {
     my $content_type = $r->header_in('Content-Type');
     my $content_length = $r->header_in('Content-Length');
     my $body = HTTP::Body->new($content_type, $content_length);
+    
+    # enable automatic deletion of temporary files at DESTROY-time.
+    $body->cleanup(1);
 
     # Read the file contents
     my $buffer;
@@ -43,17 +46,12 @@ sub post {
     my $tempname = $body->{upload}->{file}->{tempname};
     my $filename = $body->{upload}->{file}->{filename};
 
-    unless ($filename =~ /^[a-zA-Z0-9]+\.[a-zA-Z0-9]{1,100}$/) {
-	unlink $tempname;
-        return error($r, HTTP_BAD_REQUEST, "Invalid filename format");
-    }
+    # Check for "filename.extension" format
+    unless $filename =~ /^[a-zA-Z0-9]+\.[a-zA-Z0-9]{1,100}$/ return error($r, HTTP_BAD_REQUEST, "Invalid filename format");
 
     my $destination = $upload_dir . "/" . $filename;
 
-    unless (move($tempname, $destination)) {
-	unlink $tempname;
-        return error($r, HTTP_INTERNAL_SERVER_ERROR, "Unable to move uploaded file");
-    }
+    unless move($tempname, $destination) return error($r, HTTP_INTERNAL_SERVER_ERROR, "Unable to move uploaded file");
 
     $r->status(HTTP_CREATED);
     my $response = '{"message": "File uploaded successfully"}';
