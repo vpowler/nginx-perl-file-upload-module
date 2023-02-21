@@ -14,3 +14,5 @@ COPY UploadModule.pm /etc/nginx/perl/UploadModule.pm
 RUN nginx -t
 
 ENTRYPOINT ["/usr/local/bin/entrypoint.sh"]
+
+CMD ["nginx", "-g", "daemon off;"]
