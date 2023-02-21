@@ -1,5 +1,7 @@
 FROM nginx:1.23.3-alpine-perl
 
+RUN nginx -t
+
 RUN apk add perl-http-body
 
 RUN mkdir /etc/nginx/perl
