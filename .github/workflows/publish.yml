@@ -20,10 +20,3 @@ jobs:
             org.opencontainers.image.description=A Docker image for running Nginx with Perl file upload module
             org.opencontainers.image.source=https://github.com/vpowler/nginx-perl-file-upload-module
 
-      - name: Clean up old images
-        uses: docker/cleanup-action@v2
-        with:
-          images: ghcr.io/vpowler/nginx-perl-file-upload-module
-          tags: |
-            latest
-            $(git rev-parse --short ${{ github.sha }})
