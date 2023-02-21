@@ -42,6 +42,10 @@ sub post {
         $body->add(substr($buffer, 0, $bytes_read));
     }
 
+    unless (defined $body->{upload} && defined $body->{upload}->{file}) {
+        return error($r, HTTP_BAD_REQUEST, "Cannot parse multipart data");
+    }
+
     # Get the parsed params
     my $tempname = $body->{upload}->{file}->{tempname};
     my $filename = $body->{upload}->{file}->{filename};
