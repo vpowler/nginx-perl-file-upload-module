@@ -41,8 +41,8 @@ sub post {
     while (my $bytes_read = $fh->read($buffer, 1024)) {
         $body->add(substr($buffer, 0, $bytes_read));
     }
-
-    unless (defined $body->{upload} && defined $body->{upload}->{file}) {
+    
+    unless (defined $body->{upload} && defined $body->{upload}->{file} && ref $body->{upload}->{file} eq 'HASH') {
         return error($r, HTTP_INTERNAL_SERVER_ERROR, "Cannot parse multipart data");
     }
 
